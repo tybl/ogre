@@ -16,6 +16,11 @@
 # https://opensource.org/licenses/ISC
 ################################################################################
 
-add_executable(example)
-target_link_libraries(example PRIVATE compiler_settings)
-target_sources(example PRIVATE example/main.cpp)
+add_library(tasklib)
+target_include_directories(tasklib PUBLIC tasklib)
+target_link_libraries(tasklib PUBLIC compiler_settings)
+target_sources(tasklib
+  PRIVATE
+    tasklib/util/uuid.cpp
+  PUBLIC
+    tasklib/util/uuid.hpp)
