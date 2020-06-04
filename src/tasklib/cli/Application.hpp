@@ -19,6 +19,7 @@
 
 #include <list>
 #include <map>
+#include <stdexcept>
 #include <string_view>
 #include <variant>
 #include <vector>
@@ -38,6 +39,11 @@ public:
   template <typename... Args>
   Option(Args... names)
     : mNames{names...} {}
+
+  auto add_help(std::string_view help) -> Option& {
+    mHelp = help;
+    return *this;
+  }
 }; // class Parameter
 
 // A command can have multiple names
@@ -85,6 +91,14 @@ public:
     return mOptions.back();
   }
 
+  auto get_subcommand(std::string_view sv) -> Command& {
+    return *std::get<command_iter>(mStrToParamMap.at(sv));
+  }
+
+  auto get_option(std::string_view sv) -> Option& {
+    return *std::get<option_iter>(mStrToParamMap.at(sv));
+  }
+
 private:
   template <typename Iterator>
   void index_parameter(Iterator pParamIter) {
@@ -106,7 +120,9 @@ public:
     // The ctor receives the app name and version. It doesn't receive the
     // command-line arguments. As such, it is not aware of any overridden
     // configuration values.
-    mCommand.add_option("--version");
+    mCommand.add_option("-v", "--version")
+            .add_help("Displays the version and exits");
+    mCommand.add_subcommand("add").add_help("");
   }
 
   auto run(int, char const*[]) -> int {
