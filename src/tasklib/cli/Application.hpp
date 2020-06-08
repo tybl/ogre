@@ -17,6 +17,7 @@
  ******************************************************************************/
 #pragma once
 
+#include <functional>
 #include <list>
 #include <map>
 #include <stdexcept>
@@ -52,6 +53,7 @@ class Command {
   using command_iter = std::list<Command>::iterator;
   using option_iter = std::list<Option>::iterator;
   using param_iter = std::variant<command_iter, option_iter>;
+  using callback = std::function<int(std::map<std::string_view, std::string_view>)>;
 
   // Members used to specify a command:
 
@@ -60,6 +62,8 @@ class Command {
 
   // - mHelp: A description of how to use the command
   std::string_view mHelp;
+
+  callback mAction;
 
   std::list<Command> mSubcommands;
   std::list<Option> mOptions;
@@ -89,6 +93,11 @@ public:
       mOptions.emplace(std::cend(mOptions), std::forward<Args>(names)...);
     index_parameter(new_option);
     return mOptions.back();
+  }
+
+  auto add_action(callback&& action) -> Command& {
+    mAction = action;
+    return *this;
   }
 
   auto get_subcommand(std::string_view sv) -> Command& {
