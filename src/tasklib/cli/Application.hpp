@@ -17,105 +17,12 @@
  ******************************************************************************/
 #pragma once
 
-#include <functional>
-#include <list>
-#include <map>
-#include <stdexcept>
+#include "Command.hpp"
+
+#include <iostream>
 #include <string_view>
-#include <variant>
-#include <vector>
 
 namespace ogre {
-
-class Option {
-  friend class Command;
-  // Members used to specify a command:
-
-  // - mNames: All the names that can be used to supply a parameter
-  std::vector<std::string_view> mNames;
-
-  // - mHelp: A description of the parameter
-  std::string_view mHelp;
-public:
-  template <typename... Args>
-  Option(Args... names)
-    : mNames{names...} {}
-
-  auto add_help(std::string_view help) -> Option& {
-    mHelp = help;
-    return *this;
-  }
-}; // class Parameter
-
-// A command can have multiple names
-// A command can have help text
-class Command {
-  using command_iter = std::list<Command>::iterator;
-  using option_iter = std::list<Option>::iterator;
-  using param_iter = std::variant<command_iter, option_iter>;
-  using callback = std::function<int(std::map<std::string_view, std::string_view>)>;
-
-  // Members used to specify a command:
-
-  // - mNames: All the names that can be used to invoke the command
-  std::vector<std::string_view> mNames;
-
-  // - mHelp: A description of how to use the command
-  std::string_view mHelp;
-
-  callback mAction;
-
-  std::list<Command> mSubcommands;
-  std::list<Option> mOptions;
-  std::map<std::string_view, param_iter> mStrToParamMap;
-public:
-
-  template <typename... Args>
-  Command(Args... names)
-    : mNames{names...} {}
-
-  auto add_help(std::string_view help) -> Command& {
-    mHelp = help;
-    return *this;
-  }
-
-  template <typename... Args>
-  auto add_subcommand(Args&&... names) -> Command& {
-    auto new_subcommand =
-      mSubcommands.emplace(mSubcommands.cend(), std::forward<Args>(names)...);
-    index_parameter(new_subcommand);
-    return mSubcommands.back();
-  }
-
-  template <typename... Args>
-  auto add_option(Args&&... names) -> Option& {
-    auto new_option =
-      mOptions.emplace(std::cend(mOptions), std::forward<Args>(names)...);
-    index_parameter(new_option);
-    return mOptions.back();
-  }
-
-  auto add_action(callback&& action) -> Command& {
-    mAction = action;
-    return *this;
-  }
-
-  auto get_subcommand(std::string_view sv) -> Command& {
-    return *std::get<command_iter>(mStrToParamMap.at(sv));
-  }
-
-  auto get_option(std::string_view sv) -> Option& {
-    return *std::get<option_iter>(mStrToParamMap.at(sv));
-  }
-
-private:
-  template <typename Iterator>
-  void index_parameter(Iterator pParamIter) {
-    for (auto const& name : pParamIter->mNames) {
-      mStrToParamMap.insert_or_assign(name, pParamIter);
-    }
-  }
-}; // class Command
 
 class Application {
   Command mCommand;
@@ -131,15 +38,25 @@ public:
     // configuration values.
     mCommand.add_option("-v", "--version")
             .add_help("Displays the version and exits");
-    mCommand.add_subcommand("add").add_help("");
+    mCommand.add_subcommand("add").add_help("").
+      add_action([](std::map<std::string_view, std::string_view> options) -> int {
+        for (auto const& pr : options) {
+          std::cout << "\"" << pr.first << "\": \"" << pr.second << "\"\n";
+        }
+        return 0;
+      });
   }
 
   auto run(int, char const*[]) -> int {
+    return run({""});
+  }
+
+  auto run(std::vector<std::string_view> const& input) -> int {
+    return mCommand.parse(input).run();
     // Read config file
     // Open data file
     // Load data file
     // Close data file
-    return 0;
   }
 
 }; // class Application
