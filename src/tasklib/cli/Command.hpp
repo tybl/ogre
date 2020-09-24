@@ -1,6 +1,4 @@
-//
-// Created by tbrandonlyons on 6/8/20.
-//
+// License: The Unlicense (https://unlicense.org)
 #pragma once
 
 #include "Option.hpp"
