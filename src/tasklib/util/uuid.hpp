@@ -13,8 +13,6 @@ public:
 
   static auto Create() -> uuid;
 
-  auto operator<=>(uuid const&) const = default;
-
   [[nodiscard]]
   auto to_string() const -> std::string const&;
 
