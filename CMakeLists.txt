@@ -10,8 +10,7 @@ project(TaskOgre
 
 option(BUILD_PROJECT_TESTS "Build and run tests as a subproject" OFF)
 
-set(IS_ROOT_PROJECT CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
-if(IS_ROOT_PROJECT)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   include(CTest)
 endif()
 include(FetchContent)
@@ -21,6 +20,6 @@ include(util/cmake/Linters.cmake)
 add_subdirectory(src)
 add_subdirectory(app)
 
-if(IS_ROOT_PROJECT OR BUILD_PROJECT_TESTS)
+if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) OR BUILD_PROJECT_TESTS)
   add_subdirectory(test EXCLUDE_FROM_ALL)
 endif()
