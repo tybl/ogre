@@ -12,6 +12,12 @@ FetchContent_MakeAvailable(doctest)
 
 # Define unittests executable target
 add_executable(unit_test)
+if(CLANG_TIDY_EXE)
+  set_target_properties(unit_test PROPERTIES CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND_LINE}")
+endif()
+if(CPPCHECK_EXE)
+  set_target_properties(unit_test PROPERTIES CXX_CPPCHECK "${CPPCHECK_COMMAND_LINE}")
+endif()
 target_link_libraries(unit_test
   PRIVATE
     compile_settings
