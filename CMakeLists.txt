@@ -17,6 +17,12 @@ include(FetchContent)
 include(util/cmake/CompilerSettings.cmake)
 include(util/cmake/Linters.cmake)
 
+FetchContent_Declare(fmt
+  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+  GIT_SHALLOW    TRUE
+  GIT_TAG        "7.0.3")
+FetchContent_MakeAvailable(fmt)
+
 add_subdirectory(src)
 add_subdirectory(app)
 
