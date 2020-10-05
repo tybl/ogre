@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.14) # FetchContent_MakeAvailable
 # Use doctest as unit test framework
 FetchContent_Declare(doctest
   GIT_REPOSITORY https://github.com/onqtam/doctest.git
-  GIT_TAG        "2.3.8")
+  GIT_TAG        "2.4.0")
 FetchContent_MakeAvailable(doctest)
 
 # Define unittests executable target
