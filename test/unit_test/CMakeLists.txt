@@ -19,12 +19,4 @@ target_link_libraries(unit_test
 target_sources(unit_test
   PRIVATE
     main.cpp)
-
-add_test(NAME build_unit_test_t
-  COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target unit_test)
-set_tests_properties(build_unit_test_t
-  PROPERTIES FIXTURES_SETUP unit_test_tf)
-
-add_test(NAME run_unit_test_t COMMAND unit_test)
-set_tests_properties(run_unit_test_t
-  PROPERTIES FIXTURES_REQUIRED unit_test_tf)
+add_test(NAME unit_test_t COMMAND unit_test)
