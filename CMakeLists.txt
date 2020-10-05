@@ -17,6 +17,14 @@ include(FetchContent)
 include(util/cmake/CompilerSettings.cmake)
 include(util/cmake/Linters.cmake)
 
+# External Projects
+## Test framework
+FetchContent_Declare(doctest
+  GIT_REPOSITORY https://github.com/onqtam/doctest.git
+  GIT_SHALLOW    TRUE
+  GIT_TAG        "2.4.0")
+FetchContent_MakeAvailable(doctest)
+## Formatting library
 FetchContent_Declare(fmt
   GIT_REPOSITORY https://github.com/fmtlib/fmt.git
   GIT_SHALLOW    TRUE
