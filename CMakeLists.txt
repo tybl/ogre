@@ -15,7 +15,7 @@ if(IS_ROOT_PROJECT)
   include(CTest)
 endif()
 include(FetchContent)
-include(util/cmake/compiler_settings.cmake)
+include(util/cmake/CompilerSettings.cmake)
 include(util/cmake/Linters.cmake)
 
 add_subdirectory(src)
