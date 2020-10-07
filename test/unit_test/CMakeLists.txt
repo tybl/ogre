@@ -14,8 +14,10 @@ endif()
 target_link_libraries(unit_test
   PRIVATE
     compile_settings
-    doctest::doctest)
+    doctest::doctest
+    tasklib)
 target_sources(unit_test
   PRIVATE
+  tasklib/cli/Application_help.cpp
     main.cpp)
 add_test(NAME unit_test_t COMMAND unit_test)
