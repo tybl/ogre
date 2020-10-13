@@ -6,6 +6,7 @@
 #include <functional>
 #include <list>
 #include <map>
+#include <stdexcept>
 #include <string_view>
 #include <variant>
 
@@ -89,7 +90,11 @@ public:
   // strings on the command line, so they are provided as strings to the
   // callable object.
   Action parse(std::vector<std::string_view>) {
-    return Action();
+    throw std::runtime_error(
+    "Usage: app [options]\n\n"
+    "Optional arguments:\n"
+    "-h, --help     Print this message and exit\n"
+    "-v, --verbose  Enable verbose logging\n");
   }
 
 private:
