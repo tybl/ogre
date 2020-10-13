@@ -13,7 +13,7 @@ else()
   message(STATUS "clang-tidy NOT found")
 endif()
 
-find_program(CPPCHECK_EXE cppcheck)
+#find_program(CPPCHECK_EXE cppcheck)
 if(CPPCHECK_EXE)
   message(STATUS "Found cppcheck")
   set(CPPCHECK_COMMAND_LINE "${CPPCHECK_EXE};--force")
