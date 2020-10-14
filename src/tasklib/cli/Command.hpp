@@ -1,16 +1,17 @@
 // License: The Unlicense (https://unlicense.org)
 #pragma once
 
+#include <map>
+#include <string_view>
+#include <vector>
+
 #include <cassert>
 #include <functional>
 #include <iostream>
 #include <list>
-#include <map>
 #include <span>
 #include <stdexcept>
-#include <string_view>
 #include <variant>
-#include <vector>
 
 namespace ogre {
 
@@ -24,32 +25,18 @@ class Option {
   std::vector<std::string_view> mNames;
   std::string_view mHelp;
 public:
+
   template <typename... Args>
   Option(Args... names)
-    : mNames{names...} {}
+    : mNames{names...} { }
 
-  auto add_help(std::string_view help) -> Option& {
-    mHelp = help;
-    return *this;
-  }
+  auto add_help(std::string_view help) -> Option&;
 
-  void parse(std::span<std::string_view> args, Parameters& params) {
-    if (args.empty()) {
-      throw std::runtime_error("Error: Unknown option");
-    }
-    if (!is_invoked_option(args.front())) {
-      throw std::runtime_error("Error: Invoked command with different name");
-    }
-    //std::cerr << __FILE__ << ": " << __LINE__ << " - " << mNames.front() << " : " << args.front() << std::endl;
-    for (auto name : mNames) {
-      params.Options[name] = "true";
-    }
-  }
+  void parse(std::span<std::string_view> args, Parameters& params);
 
   [[nodiscard]] inline auto
-  is_invoked_option(std::string_view name) const -> bool {
-    return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
-  }
+  is_invoked_option(std::string_view name) const -> bool;
+
 }; // class Option
 
 // A command can have multiple names
@@ -79,10 +66,7 @@ public:
   Command(Args... names)
     : mNames{names...} {}
 
-  auto add_help(std::string_view help) -> Command& {
-    mHelp = help;
-    return *this;
-  }
+  auto add_help(std::string_view help) -> Command&;
 
   template <typename... Args>
   auto add_subcommand(Args&&... names) -> Command& {
@@ -98,61 +82,24 @@ public:
     return mOptions.back();
   }
 
-  auto add_action(callback action) -> Command& {
-    mAction = action;
-    return *this;
-  }
+  auto add_action(callback action) -> Command&;
 
-  auto get_subcommand(std::string_view sv) -> Command& {
-    return *std::get<command_iter>(mStrToParamMap.at(sv));
-  }
+  auto get_subcommand(std::string_view sv) -> Command&;
 
-  auto get_option(std::string_view sv) -> Option& {
-    return *std::get<option_iter>(mStrToParamMap.at(sv));
-  }
+  auto get_option(std::string_view sv) -> Option&;
 
   // parse() constructs an Action object containing the callable object
   // and the parameters to provide to it. All parameters are provided as
   // strings on the command line, so they are provided as strings to the
   // callable object.
-  int run(std::span<std::string_view> args) {
-    Parameters params;
-    auto action = parse(args, params);
-    return action(params);
-  }
+  int run(std::span<std::string_view> args);
 
 private:
 
   [[nodiscard]] inline auto
-  is_invoked_command(std::string_view name) const -> bool {
-    return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
-  }
+  is_invoked_command(std::string_view name) const -> bool;
 
-  callback& parse(std::span<std::string_view> args, Parameters& params) {
-    if (args.empty()) {
-      throw std::runtime_error("Error: Unknown command");
-    }
-    if (!is_invoked_command(args.front())) {
-      throw std::runtime_error("Error: Command invoked with incorrect name");
-    }
-    args = args.subspan(1);
-    while (!args.empty()) {
-      auto sub = mStrToParamMap.find(args.front());
-      if (mStrToParamMap.end() != sub) {
-        // The argument is an option or subcommand
-        if (std::holds_alternative<command_iter>(sub->second)) {
-          return std::get<command_iter>(sub->second)->parse(args, params);
-        } else {
-          assert(std::holds_alternative<option_iter>(sub->second));
-          std::get<option_iter>(sub->second)->parse(args, params);
-        }
-      } else {
-        params.Arguments.push_back(args.front());
-      }
-      args = args.subspan(1);
-    }
-    return mAction;
-  }
+  callback& parse(std::span<std::string_view> args, Parameters& params);
 
   template <typename Iterator>
   void index_parameter(Iterator pParamIter) {

@@ -13,6 +13,7 @@ target_include_directories(tasklib PUBLIC tasklib)
 target_link_libraries(tasklib PUBLIC compiler_settings)
 target_sources(tasklib
   PRIVATE
+    tasklib/cli/Command.cpp
     tasklib/util/uuid.cpp
   PUBLIC
     tasklib/cli/Command.hpp
