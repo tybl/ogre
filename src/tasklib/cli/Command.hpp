@@ -3,25 +3,23 @@
 
 #include "Option.hpp"
 
+#include <cassert>
 #include <functional>
+#include <iostream>
 #include <list>
 #include <map>
+#include <span>
 #include <stdexcept>
 #include <string_view>
 #include <variant>
+#include <vector>
 
 namespace ogre {
 
-class Action {
-  using callback =
-    std::function<int(std::map<std::string_view, std::string_view>)>;
-  callback mAction;
-  std::map<std::string_view, std::string_view> mArgs;
-public:
-  int run() {
-    return mAction(mArgs);
-  }
-};
+struct Parameters {
+  std::map<std::string_view, std::string_view> Options;
+  std::vector<std::string_view> Arguments;
+}; // struct Parameters
 
 // A command can have multiple names
 // A command can have help text
@@ -29,8 +27,7 @@ class Command {
   using command_iter = std::list<Command>::iterator;
   using option_iter = std::list<Option>::iterator;
   using param_iter = std::variant<command_iter, option_iter>;
-  using callback =
-    std::function<int(std::map<std::string_view, std::string_view>)>;
+  using callback = std::function<int(Parameters const&)>;
 
   // Members used to specify a command:
 
@@ -89,21 +86,52 @@ public:
   // and the parameters to provide to it. All parameters are provided as
   // strings on the command line, so they are provided as strings to the
   // callable object.
-  Action parse(std::vector<std::string_view>) {
-    throw std::runtime_error(
-    "Usage: app [options]\n\n"
-    "Optional arguments:\n"
-    "-h, --help     Print this message and exit\n"
-    "-v, --verbose  Enable verbose logging\n");
+  int run(std::span<std::string_view> args) {
+    Parameters params;
+    auto action = parse_command(args, params);
+    return action(params);
   }
 
 private:
+
+  [[nodiscard]] inline auto
+  is_invoked_command(std::string_view name) const -> bool {
+    return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
+  }
+
+  callback& parse_command(std::span<std::string_view> args, Parameters& params) {
+    if (args.empty()) {
+      throw std::runtime_error("Error: Unknown command");
+    }
+    if (!is_invoked_command(args.front())) {
+      throw std::runtime_error("Error: Invoked command with different name");
+    }
+    args = args.subspan(1);
+    while (!args.empty()) {
+      auto sub = mStrToParamMap.find(args.front());
+      if (mStrToParamMap.end() != sub) {
+        // The argument is an option or subcommand
+        if (std::holds_alternative<command_iter>(sub->second)) {
+          return std::get<command_iter>(sub->second)->parse_command(args, params);
+        } else {
+          assert(std::holds_alternative<option_iter>(sub->second));
+          std::get<option_iter>(sub->second);
+        }
+      } else {
+        params.Arguments.push_back(args.front());
+      }
+      args = args.subspan(1);
+    }
+    return mAction;
+  }
+
   template <typename Iterator>
   void index_parameter(Iterator pParamIter) {
     for (auto const& name : pParamIter->mNames) {
       mStrToParamMap.insert_or_assign(name, pParamIter);
     }
   }
+
 }; // class Command
 
 } // namespace ogre

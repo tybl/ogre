@@ -18,6 +18,6 @@ target_link_libraries(unit_test
     tasklib)
 target_sources(unit_test
   PRIVATE
-  tasklib/cli/Application_help.cpp
+    tasklib/cli/Command.cpp
     main.cpp)
 add_test(NAME unit_test_t COMMAND unit_test)

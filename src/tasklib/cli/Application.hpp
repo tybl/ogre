@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string_view>
+#include <vector>
 
 namespace ogre {
 
@@ -22,25 +23,14 @@ public:
     // configuration values.
     mCommand.add_option("-v", "--version")
             .add_help("Displays the version and exits");
-    mCommand.add_subcommand("add").add_help("").
-      add_action([](std::map<std::string_view, std::string_view> options) -> int {
-        for (auto const& pr : options) {
-          std::cout << "\"" << pr.first << "\": \"" << pr.second << "\"\n";
-        }
-        return 0;
-      });
+    mCommand.add_subcommand("add")
+            .add_help("")
+            .add_action([](Parameters const&) -> int { return 0; });
   }
 
-  auto run(int, char const*[]) -> int {
-    return run({""});
-  }
-
-  auto run(std::vector<std::string_view> const& input) -> int {
-    return mCommand.parse(input).run();
-    // Read config file
-    // Open data file
-    // Load data file
-    // Close data file
+  auto run(int argc, char const* argv[]) -> int {
+    std::vector<std::string_view> args(argv, argv + argc);
+    return mCommand.run(args);
   }
 
 }; // class Application
