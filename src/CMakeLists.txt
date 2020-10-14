@@ -16,5 +16,4 @@ target_sources(tasklib
     tasklib/util/uuid.cpp
   PUBLIC
     tasklib/cli/Command.hpp
-    tasklib/cli/Option.hpp
     tasklib/util/uuid.hpp)
