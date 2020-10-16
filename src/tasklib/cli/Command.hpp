@@ -1,8 +1,9 @@
 // License: The Unlicense (https://unlicense.org)
 #pragma once
 
+#include "vodka/string_view/basic_string_view.hpp"
+
 #include <map>
-#include <string_view>
 #include <vector>
 
 #include <cassert>
@@ -16,26 +17,26 @@
 namespace ogre {
 
 struct Parameters {
-  std::map<std::string_view, std::string_view> Options;
-  std::vector<std::string_view> Arguments;
+  std::map<tybl::vodka::string_view, tybl::vodka::string_view> Options;
+  std::vector<tybl::vodka::string_view> Arguments;
 }; // struct Parameters
 
 class Option {
   friend class Command;
-  std::vector<std::string_view> mNames;
-  std::string_view mHelp;
+  std::vector<tybl::vodka::string_view> mNames;
+  tybl::vodka::string_view mHelp;
 public:
 
   template <typename... Args>
   Option(Args... names)
     : mNames{names...} { }
 
-  auto add_help(std::string_view help) -> Option&;
+  auto add_help(tybl::vodka::string_view help) -> Option&;
 
-  void parse(std::span<std::string_view> args, Parameters& params);
+  void parse(std::span<tybl::vodka::string_view> args, Parameters& params);
 
   [[nodiscard]] inline auto
-  is_invoked_option(std::string_view name) const -> bool;
+  is_invoked_option(tybl::vodka::string_view name) const -> bool;
 
 }; // class Option
 
@@ -50,23 +51,23 @@ class Command {
   // Members used to specify a command:
 
   // - mNames: All the names that can be used to invoke the command
-  std::vector<std::string_view> mNames;
+  std::vector<tybl::vodka::string_view> mNames;
 
   // - mHelp: A description of how to use the command
-  std::string_view mHelp;
+  tybl::vodka::string_view mHelp;
 
   callback mAction;
 
   std::list<Command> mSubcommands;
   std::list<Option> mOptions;
-  std::map<std::string_view, param_iter> mStrToParamMap;
+  std::map<tybl::vodka::string_view, param_iter> mStrToParamMap;
 public:
 
   template <typename... Args>
   Command(Args... names)
     : mNames{names...} {}
 
-  auto add_help(std::string_view help) -> Command&;
+  auto add_help(tybl::vodka::string_view help) -> Command&;
 
   template <typename... Args>
   auto add_subcommand(Args&&... names) -> Command& {
@@ -84,22 +85,22 @@ public:
 
   auto add_action(callback action) -> Command&;
 
-  auto get_subcommand(std::string_view sv) -> Command&;
+  auto get_subcommand(tybl::vodka::string_view sv) -> Command&;
 
-  auto get_option(std::string_view sv) -> Option&;
+  auto get_option(tybl::vodka::string_view sv) -> Option&;
 
   // parse() constructs an Action object containing the callable object
   // and the parameters to provide to it. All parameters are provided as
   // strings on the command line, so they are provided as strings to the
   // callable object.
-  int run(std::span<std::string_view> args);
+  int run(std::span<tybl::vodka::string_view> args);
 
 private:
 
   [[nodiscard]] inline auto
-  is_invoked_command(std::string_view name) const -> bool;
+  is_invoked_command(tybl::vodka::string_view name) const -> bool;
 
-  callback& parse(std::span<std::string_view> args, Parameters& params);
+  callback& parse(std::span<tybl::vodka::string_view> args, Parameters& params);
 
   template <typename Iterator>
   void index_parameter(Iterator pParamIter) {

@@ -30,6 +30,12 @@ FetchContent_Declare(fmt
   GIT_SHALLOW    TRUE
   GIT_TAG        "7.0.3")
 FetchContent_MakeAvailable(fmt)
+## Standard library
+FetchContent_Declare(libvodka
+  GIT_REPOSITORY https://github.com/tybl/libvodka.git
+  GIT_SHALLOW    TRUE
+  GIT_TAG        origin/main)
+FetchContent_MakeAvailable(libvodka)
 
 add_subdirectory(src)
 add_subdirectory(app)

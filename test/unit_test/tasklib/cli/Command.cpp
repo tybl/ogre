@@ -2,6 +2,7 @@
 #include "cli/Command.hpp"
 
 #include "doctest/doctest.h"
+#include "vodka/string_view/basic_string_view.hpp"
 
 #include <cstdlib>
 #include <ctime>
@@ -14,7 +15,7 @@ TEST_CASE("tasklib/cli/Command") {
   ogre::Command cmd("git");
   cmd.add_action([result](ogre::Parameters const& /*args*/) -> int { return result; });
   //  Input
-  std::vector<std::string_view> input { "git" };
+  std::vector<tybl::vodka::string_view> input { "git" };
 
   // Execute
   CHECK(result == cmd.run(input));
@@ -31,7 +32,7 @@ TEST_CASE("tasklib/cli/Command subcommand") {
     return result;
   });
   //  Input
-  std::vector<std::string_view> input { "git", "add", "main.cpp" };
+  std::vector<tybl::vodka::string_view> input { "git", "add", "main.cpp" };
 
   // Execute
   CHECK(result == cmd.run(input));
@@ -57,7 +58,7 @@ TEST_CASE("tasklib/cli/Command option") {
     return result;
   });
   //  Input
-  std::vector<std::string_view> input { "git", "rm", "-f", "main.cpp" };
+  std::vector<tybl::vodka::string_view> input { "git", "rm", "-f", "main.cpp" };
 
   // Execute
   CHECK(result == cmd.run(input));
