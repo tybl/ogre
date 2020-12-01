@@ -7,7 +7,7 @@
 #include <list>
 #include <map>
 #include <span>
-#include <stdexcept>
+#include <stdexcept>  // std::runtime_error
 #include <variant>
 #include <vector>
 

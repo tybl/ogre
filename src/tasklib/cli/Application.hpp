@@ -5,7 +5,6 @@
 
 #include "vodka/string_view/basic_string_view.hpp"
 
-#include <iostream>
 #include <vector>
 
 namespace ogre {
