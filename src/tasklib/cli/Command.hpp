@@ -3,15 +3,14 @@
 
 #include "vodka/string_view/basic_string_view.hpp"
 
-#include <map>
-#include <vector>
+#include <functional> // std::function
+#include <map>        // std::map
+#include <span>       // std::span
+#include <vector>     // std::vector
 
-#include <cassert>
-#include <functional>
 #include <iostream>
 #include <list>
-#include <span>
-#include <stdexcept>
+//#include <stdexcept>
 #include <variant>
 
 namespace ogre {
