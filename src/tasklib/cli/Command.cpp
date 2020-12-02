@@ -35,10 +35,10 @@ Option::is_invoked_option(tybl::vodka::string_view name) const -> bool {
   return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
 }
 
-auto Command::add_help(tybl::vodka::string_view help) -> Command& {
-  mHelp = help;
-  return *this;
-}
+//auto Command::add_help(tybl::vodka::string_view help) -> Command& {
+  //mHelp = help;
+  //return *this;
+//}
 
 auto Command::add_action(callback action) -> Command& {
   mAction = std::move(action);
@@ -65,7 +65,7 @@ auto Command::run(std::span<tybl::vodka::string_view> args) -> int {
 
 [[nodiscard]] inline auto
 Command::is_invoked_command(tybl::vodka::string_view name) const -> bool {
-  return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
+  return names().end() != std::find(names().begin(), names().end(), name);
 }
 
 auto Command::parse(std::span<tybl::vodka::string_view> args, Parameters& params) -> Command::callback& {
@@ -83,7 +83,7 @@ auto Command::parse(std::span<tybl::vodka::string_view> args, Parameters& params
       if (std::holds_alternative<command_iter>(sub->second)) {
         return std::get<command_iter>(sub->second)->parse(args, params);
       }
-      assert(std::holds_alternative<option_iter>(sub->second));
+      //assert(std::holds_alternative<option_iter>(sub->second));
       std::get<option_iter>(sub->second)->parse(args, params);
     } else {
       params.Arguments.push_back(args.front());

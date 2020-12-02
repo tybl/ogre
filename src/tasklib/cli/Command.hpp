@@ -22,18 +22,26 @@ struct Parameters {
 }; // struct Parameters
 
 class Option {
-  friend class Command;
+
+  // - mNames: All the names that can be used to supply a parameter
   std::vector<tybl::vodka::string_view> mNames;
+
+  // - mHelp: A description of the parameter
   tybl::vodka::string_view mHelp;
+
 public:
 
   template <typename... Args>
   Option(Args... names)
     : mNames{names...} { }
 
-  auto add_help(tybl::vodka::string_view help) -> Option&;
+  virtual ~Option() = default;
+
+  virtual auto add_help(tybl::vodka::string_view help) -> Option&;
 
   void parse(std::span<tybl::vodka::string_view> args, Parameters& params);
+
+  auto names() const -> std::vector<tybl::vodka::string_view> const&;
 
   [[nodiscard]] inline auto
   is_invoked_option(tybl::vodka::string_view name) const -> bool;
@@ -42,7 +50,9 @@ public:
 
 // A command can have multiple names
 // A command can have help text
-class Command {
+class Command
+  : public Option
+{
   using command_iter = std::list<Command>::iterator;
   using option_iter = std::list<Option>::iterator;
   using param_iter = std::variant<command_iter, option_iter>;
@@ -51,10 +61,10 @@ class Command {
   // Members used to specify a command:
 
   // - mNames: All the names that can be used to invoke the command
-  std::vector<tybl::vodka::string_view> mNames;
+  //std::vector<tybl::vodka::string_view> mNames;
 
   // - mHelp: A description of how to use the command
-  tybl::vodka::string_view mHelp;
+  //tybl::vodka::string_view mHelp;
 
   callback mAction;
 
@@ -65,9 +75,11 @@ public:
 
   template <typename... Args>
   Command(Args... names)
-    : mNames{names...} {}
+    : Option{names...} {}
 
-  auto add_help(tybl::vodka::string_view help) -> Command&;
+  virtual ~Command() = default;
+
+  virtual auto add_help(tybl::vodka::string_view help) -> Command&;
 
   template <typename... Args>
   auto add_subcommand(Args&&... names) -> Command& {
@@ -104,7 +116,7 @@ private:
 
   template <typename Iterator>
   void index_parameter(Iterator pParamIter) {
-    for (auto const& name : pParamIter->mNames) {
+    for (auto const& name : pParamIter->names()) {
       mStrToParamMap.insert_or_assign(name, pParamIter);
     }
   }
