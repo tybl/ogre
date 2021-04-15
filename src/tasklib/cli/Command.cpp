@@ -13,32 +13,12 @@
 
 namespace ogre {
 
-auto Option::add_help(tybl::vodka::string_view help) -> Option& {
-  mHelp = help;
+Command::~Command() = default;
+
+auto Command::add_help(tybl::vodka::string_view help) -> Command& {
+  Option::add_help(help);
   return *this;
 }
-
-void Option::parse(std::span<tybl::vodka::string_view> args, Parameters& params) {
-  if (args.empty()) {
-    throw std::runtime_error("Error: Unknown option");
-  }
-  if (!is_invoked_option(args.front())) {
-    throw std::runtime_error("Error: Invoked command with different name");
-  }
-  for (auto name : mNames) {
-    params.Options[name] = "true";
-  }
-}
-
-[[nodiscard]] inline auto
-Option::is_invoked_option(tybl::vodka::string_view name) const -> bool {
-  return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
-}
-
-//auto Command::add_help(tybl::vodka::string_view help) -> Command& {
-  //mHelp = help;
-  //return *this;
-//}
 
 auto Command::add_action(callback action) -> Command& {
   mAction = std::move(action);

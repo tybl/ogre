@@ -14,7 +14,10 @@ target_link_libraries(tasklib PUBLIC compiler_settings vodka)
 target_sources(tasklib
   PRIVATE
     tasklib/cli/Command.cpp
+    tasklib/cli/Option.cpp
     tasklib/util/uuid.cpp
   PUBLIC
     tasklib/cli/Command.hpp
+    tasklib/cli/Option.hpp
+    tasklib/cli/Parameters.hpp
     tasklib/util/uuid.hpp)

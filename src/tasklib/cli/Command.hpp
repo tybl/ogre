@@ -1,6 +1,9 @@
 // License: The Unlicense (https://unlicense.org)
 #pragma once
 
+#include "Parameters.hpp"
+#include "Option.hpp"
+
 #include "vodka/string_view/basic_string_view.hpp"
 
 #include <functional> // std::function
@@ -10,42 +13,9 @@
 
 #include <iostream>
 #include <list>
-//#include <stdexcept>
 #include <variant>
 
 namespace ogre {
-
-struct Parameters {
-  std::map<tybl::vodka::string_view, tybl::vodka::string_view> Options;
-  std::vector<tybl::vodka::string_view> Arguments;
-}; // struct Parameters
-
-class Option {
-
-  // - mNames: All the names that can be used to supply a parameter
-  std::vector<tybl::vodka::string_view> mNames;
-
-  // - mHelp: A description of the parameter
-  tybl::vodka::string_view mHelp;
-
-public:
-
-  template <typename... Args>
-  Option(Args... names)
-    : mNames{names...} { }
-
-  virtual ~Option() = default;
-
-  virtual auto add_help(tybl::vodka::string_view help) -> Option&;
-
-  void parse(std::span<tybl::vodka::string_view> args, Parameters& params);
-
-  auto names() const -> std::vector<tybl::vodka::string_view> const&;
-
-  [[nodiscard]] inline auto
-  is_invoked_option(tybl::vodka::string_view name) const -> bool;
-
-}; // class Option
 
 // A command can have multiple names
 // A command can have help text
@@ -76,7 +46,7 @@ public:
   Command(Args... names)
     : Option{names...} {}
 
-  virtual ~Command() = default;
+  virtual ~Command();
 
   virtual auto add_help(tybl::vodka::string_view help) -> Command&;
 
