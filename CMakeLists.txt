@@ -17,19 +17,8 @@ include(FetchContent)
 include(util/cmake/CompilerSettings.cmake)
 include(util/cmake/Linters.cmake)
 
-# External Projects
-## Test framework
-FetchContent_Declare(doctest
-  GIT_REPOSITORY https://github.com/onqtam/doctest.git
-  GIT_SHALLOW    TRUE
-  GIT_TAG        "v2.4.11")
-FetchContent_MakeAvailable(doctest)
-## Formatting library
-FetchContent_Declare(fmt
-  GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-  GIT_SHALLOW    TRUE
-  GIT_TAG        "7.0.3")
-FetchContent_MakeAvailable(fmt)
+find_package(doctest REQUIRED)
+find_package(fmt REQUIRED)
 
 add_subdirectory(src)
 add_subdirectory(app)
