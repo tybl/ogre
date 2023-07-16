@@ -13,12 +13,12 @@
 
 namespace ogre {
 
-auto Option::add_help(tybl::vodka::string_view help) -> Option& {
+auto Option::add_help(std::string_view help) -> Option& {
   mHelp = help;
   return *this;
 }
 
-void Option::parse(std::span<tybl::vodka::string_view> args, Parameters& params) {
+void Option::parse(std::span<std::string_view> args, Parameters& params) {
   if (args.empty()) {
     throw std::runtime_error("Error: Unknown option");
   }
@@ -30,26 +30,32 @@ void Option::parse(std::span<tybl::vodka::string_view> args, Parameters& params)
   }
 }
 
+auto Option::names() const -> std::vector<std::string_view> const& {
+  return mNames;
+}
+
 [[nodiscard]] inline auto
-Option::is_invoked_option(tybl::vodka::string_view name) const -> bool {
+Option::is_invoked_option(std::string_view name) const -> bool {
   return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
 }
 
-//auto Command::add_help(tybl::vodka::string_view help) -> Command& {
+Command::~Command() = default;
+
+auto Command::add_help(std::string_view help) -> Command& {
   //mHelp = help;
-  //return *this;
-//}
+  return *this;
+}
 
 auto Command::add_action(callback action) -> Command& {
   mAction = std::move(action);
   return *this;
 }
 
-auto Command::get_subcommand(tybl::vodka::string_view sv) -> Command& {
+auto Command::get_subcommand(std::string_view sv) -> Command& {
   return *std::get<command_iter>(mStrToParamMap.at(sv));
 }
 
-auto Command::get_option(tybl::vodka::string_view sv) -> Option& {
+auto Command::get_option(std::string_view sv) -> Option& {
   return *std::get<option_iter>(mStrToParamMap.at(sv));
 }
 
@@ -57,18 +63,18 @@ auto Command::get_option(tybl::vodka::string_view sv) -> Option& {
   // and the parameters to provide to it. All parameters are provided as
   // strings on the command line, so they are provided as strings to the
   // callable object.
-auto Command::run(std::span<tybl::vodka::string_view> args) -> int {
+auto Command::run(std::span<std::string_view> args) -> int {
   Parameters params;
   auto action = parse(args, params);
   return action(params);
 }
 
 [[nodiscard]] inline auto
-Command::is_invoked_command(tybl::vodka::string_view name) const -> bool {
+Command::is_invoked_command(std::string_view name) const -> bool {
   return names().end() != std::find(names().begin(), names().end(), name);
 }
 
-auto Command::parse(std::span<tybl::vodka::string_view> args, Parameters& params) -> Command::callback& {
+auto Command::parse(std::span<std::string_view> args, Parameters& params) -> Command::callback& {
   if (args.empty()) {
     throw std::runtime_error("Error: Unknown command");
   }

@@ -22,7 +22,7 @@ include(util/cmake/Linters.cmake)
 FetchContent_Declare(doctest
   GIT_REPOSITORY https://github.com/onqtam/doctest.git
   GIT_SHALLOW    TRUE
-  GIT_TAG        "2.4.0")
+  GIT_TAG        "v2.4.11")
 FetchContent_MakeAvailable(doctest)
 ## Formatting library
 FetchContent_Declare(fmt
@@ -30,12 +30,6 @@ FetchContent_Declare(fmt
   GIT_SHALLOW    TRUE
   GIT_TAG        "7.0.3")
 FetchContent_MakeAvailable(fmt)
-## Standard library
-FetchContent_Declare(libvodka
-  GIT_REPOSITORY https://github.com/tybl/libvodka.git
-  GIT_SHALLOW    TRUE
-  GIT_TAG        origin/main)
-FetchContent_MakeAvailable(libvodka)
 
 add_subdirectory(src)
 add_subdirectory(app)

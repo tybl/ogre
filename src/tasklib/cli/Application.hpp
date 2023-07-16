@@ -3,18 +3,17 @@
 
 #include "Command.hpp"
 
-#include "vodka/string_view/basic_string_view.hpp"
-
+#include <string_view>
 #include <vector>
 
 namespace ogre {
 
 class Application {
   Command mCommand;
-  tybl::vodka::string_view mVersion;
+  std::string_view mVersion;
 public:
 
-  Application(tybl::vodka::string_view name, tybl::vodka::string_view version)
+  Application(std::string_view name, std::string_view version)
     : mCommand(name)
     , mVersion(version)
   {
@@ -29,7 +28,7 @@ public:
   }
 
   auto run(int argc, char const* argv[]) -> int {
-    std::vector<tybl::vodka::string_view> args(argv, argv + argc);
+    std::vector<std::string_view> args(argv, argv + argc);
     return mCommand.run(args);
   }
 
