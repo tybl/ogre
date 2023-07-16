@@ -1,5 +1,5 @@
 // License: The Unlicense (https://unlicense.org)
-#include "Command.hpp"
+#include "cli/Command.hpp"
 
 #include <cassert>
 #include <functional>
