@@ -1,7 +1,7 @@
 ################################################################################
 # License: The Unlicense (https://unlicense.org)
 ################################################################################
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.21)
 
 project(TaskOgre
   VERSION 0.0.0
@@ -11,12 +11,13 @@ project(TaskOgre
 find_package(doctest REQUIRED)
 find_package(fmt REQUIRED)
 
-if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if(PROJECT_IS_TOP_LEVEL)
   include(CTest)
-endif()
-include(utils/cmake/CompilerSettings.cmake)
-include(utils/cmake/Linters.cmake)
+  include(utils/cmake/CompilerSettings.cmake)
+  include(utils/cmake/Linters.cmake)
 
-add_subdirectory(utils/doctest)
+  add_subdirectory(utils/doctest)
+endif()
+
 add_subdirectory(libs)
 add_subdirectory(apps)

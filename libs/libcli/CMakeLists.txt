@@ -16,7 +16,7 @@ target_link_libraries(test_libcli
   PRIVATE
     compiler_settings
     libcli
-    test_base)
+    test_main)
 target_sources(test_libcli
   PRIVATE
     test/cli/Command.cpp)
