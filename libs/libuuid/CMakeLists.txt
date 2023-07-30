@@ -3,8 +3,8 @@
 ################################################################################
 
 add_library(libuuid)
+target_compile_features(libuuid PRIVATE cxx_std_20)
 target_include_directories(libuuid PUBLIC include)
-target_link_libraries(libuuid PUBLIC compiler_settings)
 target_sources(libuuid
   PRIVATE
     src/uuid/uuid.cpp
