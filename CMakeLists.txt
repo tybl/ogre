@@ -13,8 +13,6 @@ find_package(fmt REQUIRED)
 
 if(PROJECT_IS_TOP_LEVEL)
   include(CTest)
-  include(utils/cmake/CompilerSettings.cmake)
-  include(utils/cmake/Linters.cmake)
 
   add_subdirectory(utils/doctest)
 endif()
