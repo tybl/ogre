@@ -11,20 +11,18 @@ namespace ogre {
 class Application {
   Command mCommand;
   std::string_view mVersion;
-public:
 
+public:
   Application(std::string_view name, std::string_view version)
-    : mCommand(name)
-    , mVersion(version)
-  {
+      : mCommand(name)
+      , mVersion(version) {
     // The ctor receives the app name and version. It doesn't receive the
     // command-line arguments. As such, it is not aware of any overridden
     // configuration values.
     mCommand.add_option("-v", "--version")
-            .add_help("Displays the version and exits");
-    mCommand.add_subcommand("add")
-            .add_help("")
-            .add_action([](Parameters const&) -> int { return 0; });
+        .add_help("Displays the version and exits");
+    mCommand.add_subcommand("add").add_help("").add_action(
+        [](Parameters const&) -> int { return 0; });
   }
 
   auto run(int argc, char const* argv[]) -> int {

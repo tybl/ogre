@@ -7,7 +7,7 @@
 #include <list>
 #include <map>
 #include <span>
-#include <stdexcept>  // std::runtime_error
+#include <stdexcept> // std::runtime_error
 #include <variant>
 #include <vector>
 
@@ -34,15 +34,15 @@ auto Option::names() const -> std::vector<std::string_view> const& {
   return mNames;
 }
 
-[[nodiscard]] inline auto
-Option::is_invoked_option(std::string_view name) const -> bool {
+[[nodiscard]] inline auto Option::is_invoked_option(std::string_view name) const
+    -> bool {
   return mNames.end() != std::find(mNames.begin(), mNames.end(), name);
 }
 
 Command::~Command() = default;
 
 auto Command::add_help(std::string_view help) -> Command& {
-  //mHelp = help;
+  // mHelp = help;
   return *this;
 }
 
@@ -59,10 +59,10 @@ auto Command::get_option(std::string_view sv) -> Option& {
   return *std::get<option_iter>(mStrToParamMap.at(sv));
 }
 
-  // parse() constructs an Action object containing the callable object
-  // and the parameters to provide to it. All parameters are provided as
-  // strings on the command line, so they are provided as strings to the
-  // callable object.
+// parse() constructs an Action object containing the callable object
+// and the parameters to provide to it. All parameters are provided as
+// strings on the command line, so they are provided as strings to the
+// callable object.
 auto Command::run(std::span<std::string_view> args) -> int {
   Parameters params;
   auto action = parse(args, params);
@@ -74,7 +74,8 @@ Command::is_invoked_command(std::string_view name) const -> bool {
   return names().end() != std::find(names().begin(), names().end(), name);
 }
 
-auto Command::parse(std::span<std::string_view> args, Parameters& params) -> Command::callback& {
+auto Command::parse(std::span<std::string_view> args, Parameters& params)
+    -> Command::callback& {
   if (args.empty()) {
     throw std::runtime_error("Error: Unknown command");
   }
@@ -89,7 +90,7 @@ auto Command::parse(std::span<std::string_view> args, Parameters& params) -> Com
       if (std::holds_alternative<command_iter>(sub->second)) {
         return std::get<command_iter>(sub->second)->parse(args, params);
       }
-      //assert(std::holds_alternative<option_iter>(sub->second));
+      // assert(std::holds_alternative<option_iter>(sub->second));
       std::get<option_iter>(sub->second)->parse(args, params);
     } else {
       params.Arguments.push_back(args.front());

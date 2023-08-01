@@ -5,11 +5,11 @@
 #include <map>        // std::map
 #include <span>       // std::span
 #include <string_view>
-#include <vector>     // std::vector
+#include <vector> // std::vector
 
 #include <iostream>
 #include <list>
-//#include <stdexcept>
+// #include <stdexcept>
 #include <variant>
 
 namespace ogre {
@@ -28,10 +28,9 @@ class Option {
   std::string_view mHelp;
 
 public:
-
   template <typename... Args>
   Option(Args... names)
-    : mNames{names...} { }
+      : mNames{names...} {}
 
   virtual ~Option() = default;
 
@@ -41,16 +40,14 @@ public:
 
   auto names() const -> std::vector<std::string_view> const&;
 
-  [[nodiscard]] inline auto
-  is_invoked_option(std::string_view name) const -> bool;
+  [[nodiscard]] inline auto is_invoked_option(std::string_view name) const
+      -> bool;
 
 }; // class Option
 
 // A command can have multiple names
 // A command can have help text
-class Command
-  : public Option
-{
+class Command : public Option {
   using command_iter = std::list<Command>::iterator;
   using option_iter = std::list<Option>::iterator;
   using param_iter = std::variant<command_iter, option_iter>;
@@ -59,21 +56,21 @@ class Command
   // Members used to specify a command:
 
   // - mNames: All the names that can be used to invoke the command
-  //std::vector<std::string_view> mNames;
+  // std::vector<std::string_view> mNames;
 
   // - mHelp: A description of how to use the command
-  //std::string_view mHelp;
+  // std::string_view mHelp;
 
   callback mAction;
 
   std::list<Command> mSubcommands;
   std::list<Option> mOptions;
   std::map<std::string_view, param_iter> mStrToParamMap;
-public:
 
+public:
   template <typename... Args>
   Command(Args... names)
-    : Option{names...} {}
+      : Option{names...} {}
 
   virtual ~Command();
 
@@ -81,14 +78,16 @@ public:
 
   template <typename... Args>
   auto add_subcommand(Args&&... names) -> Command& {
-    auto new_subcommand = mSubcommands.emplace(mSubcommands.cend(), std::forward<Args>(names)...);
+    auto new_subcommand =
+        mSubcommands.emplace(mSubcommands.cend(), std::forward<Args>(names)...);
     index_parameter(new_subcommand);
     return mSubcommands.back();
   }
 
   template <typename... Args>
   auto add_option(Args&&... names) -> Option& {
-    auto new_option = mOptions.emplace(std::cend(mOptions), std::forward<Args>(names)...);
+    auto new_option =
+        mOptions.emplace(std::cend(mOptions), std::forward<Args>(names)...);
     index_parameter(new_option);
     return mOptions.back();
   }
@@ -106,9 +105,8 @@ public:
   int run(std::span<std::string_view> args);
 
 private:
-
-  [[nodiscard]] inline auto
-  is_invoked_command(std::string_view name) const -> bool;
+  [[nodiscard]] inline auto is_invoked_command(std::string_view name) const
+      -> bool;
 
   callback& parse(std::span<std::string_view> args, Parameters& params);
 
